@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <style>
+    .dropdown {
+      position: relative;
+      width: 300px;
+      border: 1px solid #ccc;
+      padding: 2px;
+    }
+
+    .dropdown input {
+      width: 99%;
+      line-height: 20px;
+      display: inline-block;
+    }
+
+    .drop {
+      position: absolute;
+      border: 1px solid #ccc;
+      border-top-color: transparent;
+      border-bottom-color: transparent;
+      width: 100%;
+    }
+
+    ul {
+      display: none;
+      padding: 0px;
+      margin: 0px;
+      box-shadow: 8px 5px 2px -4px #ccc;
+    }
+
+    li {
+      display: block;
+      cursor: pointer;
+      padding: 5px;
+      border-bottom: 1px solid #9c9696;
+    }
+
+    li:hover {
+      background: #eff5f6;
+    }
+
+    li.selected {
+      background: #ccc;
+    }
+
+    .selectedItem {
+      display: inline-block;
+      border: 1px solid #ccc;
+      margin: 3px;
+      padding: 2px;
+    }
+
+    span.remove {
+      color: red;
+      display: inline-block;
+      width: 20px;
+      text-align: end;
+      font-weight: bold;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>search</h1>
+  <hr>
+  <div class="dropdown">
+    <input type="text" name="search" id="search">
+    <div id="selected"></div>
+    <div class="drop">
+      <ul id="optionList">
+        <li></li>
+      </ul>
+    </div>
+  </div>
+  <script>
+    var selected = [];
+    var tags = [
+      "Delhi",
+      "Ahemdabad",
+      "Punjab",
+      "Uttar Pradesh",
+      "Himachal Pradesh",
+      "Karnatka",
+      "Kerela",
+      "Maharashtra",
+      "Gujrat",
+      "Rajasthan",
+      "Bihar",
+      "Tamil Nadu",
+      "Haryana"
+    ];
+    window.onload = init;
+    var optionList, search, selectedDiv;
+    function init() {
+      optionList = document.getElementById('optionList');
+      selectedDiv = document.getElementById('selected');
+      search = document.getElementById('search');
+      search.addEventListener('keyup', searchOptions);
+      search.addEventListener('focus', showDrop);
+      optionList.addEventListener('click', selectItem);
+      document.addEventListener('click', hideDrop);
+      populateOptions(tags);
+    }
+
+    function populateSelected() {
+      var selectedItems = '';
+      selected.forEach(function (option) {
+        selectedItems += `<div class="selectedItem"><span class="label">${option}</span><span class="remove">X</span></div>`;
+      });
+      selectedDiv.innerHTML = selectedItems;
+    }
+
+    function selectItem(e) {
+      if (e.target.tagName === 'LI') {
+        var index = selected.indexOf(e.target.innerHTML);
+        if (index === -1) {
+          e.target.classList.add('selected');
+          selected.push(e.target.innerHTML);
+        } else {
+          e.target.classList.remove('selected');
+          selected.splice(index, 1);
+        }
+      }
+      populateSelected();
+    }
+
+    function showDrop() {
+      optionList.style.display = 'block';
+    }
+    function hideDrop(e) {
+      if (['LI', 'DIV', 'INPUT'].indexOf(e.target.tagName) === -1) {
+        optionList.style.display = 'none';
+      }
+      if (e.target.className === 'remove') {
+        var removeSeleted = e.target.previousSibling.innerText;
+        index = selected.indexOf(removeSeleted);
+        selected.splice(index, 1);
+        e.target.parentElement.remove();
+        populateOptions([...tags]);
+      }
+    }
+    function searchOptions(e) {
+      var searchText = e.target.value;
+      showDrop();
+      var options = [...tags];
+      if (searchText) {
+        options = options.filter(function (item) { return item.toLowerCase().indexOf(searchText.trim().toLowerCase()) >= 0 });
+      } populateOptions
+      populateOptions(options);
+    }
+
+    function populateOptions(options) {
+      var listItems = '';
+      options.forEach(function (option) {
+        if (selected.indexOf(option) === -1) {
+          listItems += `<li>${option}</li>`;
+        } else {
+          listItems += `<li class="selected">${option}</li>`;
+        }
+      });
+      optionList.innerHTML = listItems;
+    }
+  </script>
+</body>
+
+</html>
